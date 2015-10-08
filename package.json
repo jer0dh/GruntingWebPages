@@ -24,6 +24,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-postcss": "^0.6.0",
     "grunt-processhtml": "^0.3.8",
+    "grunt-responsive-images": "^0.1.7",
     "grunt-strip-css-comments": "^1.2.0",
     "grunt-text-replace": "^0.4.0",
     "grunt-uncss": "^0.4.3",

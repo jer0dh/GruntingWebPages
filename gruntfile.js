@@ -59,6 +59,7 @@ module.exports = function(grunt) {
 					{src: ['images/*'], dest: '/', filter: 'isFile'}, // includes files in path
 					{src: ['css/styles.min.css'], dest: '/', filter: 'isFile'},
 					{src: ['js/scripts.min.js'], dest: '/', filter: 'isFile'},
+					{src: ['js/picturefill.min.js'], dest: '/', filter: 'isFile'},
 					{src: ['fonts/*'], dest: '/', filter: 'isFile'},
 					{src: ['index.html'], dest: '/'}
 				]
@@ -129,7 +130,7 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			dist: {
-				src: ['js/*.js','!js/scripts.js','!js/scripts.min.js'],
+				src: ['js/*.js','!js/scripts.js','!js/scripts.min.js','!js/picturefill.min.js'],
 				dest: 'js/scripts.js'
 			}
 		},
@@ -143,7 +144,30 @@ module.exports = function(grunt) {
 				}
 			}
 		},
-
+		responsive_images: {
+			myTask: {
+				options: {
+					sizes: [{
+						name: '320',
+						width: 320
+					},{
+						name: '640',
+						width: 640
+					},{
+						name: "1024",
+						width: 1024,
+						/*suffix: "_x2", */
+						quality: 60
+					}]
+				},
+				files: [{
+					expand: true,
+					src: ['**.{jpg,png}'],
+					cwd: 'working/images',
+					dest: 'working/r-images'
+				}]
+			}
+		},
 		watch: {
 			css: {
 				files: ['css/my_styles.scss'],
@@ -175,6 +199,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-responsive-images');
 
 
 	grunt.registerMultiTask('hideTemplate','Converts template tags to prevent inliner from messing with them', function () {
@@ -248,4 +273,5 @@ module.exports = function(grunt) {
     grunt.registerTask('merge',['showTemplate', 'merget']);
 	grunt.registerTask('zip', ['compress']);
 	grunt.registerTask('default',['watch']);
+	grunt.registerTask('responsive',['responsive_images']);
 };

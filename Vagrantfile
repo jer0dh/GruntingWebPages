@@ -95,18 +95,9 @@ Vagrant.configure(2) do |config|
              sudo n stable
              hash -r
 
-	 # installing these in this provisioner shell causes errors when running the premailer.  Run after sshing into it.
-	     # sudo gem install premailer
-         # sudo gem install hpricot
+    #untested in this script - possible use with grunt-responsive-images
+    sudo apt-get install graphicsmagick
 
-     # postcss-simple-vars complaining on 0.10 version of node.
-
-     #Moving this into script to see if it works okay...upgrades node to latest.
-         #sudo npm cache clean -f
-         #sudo npm install -g n
-         #sudo n stable
-         #hash -r
-         #node -v should show latest version
      #
    SHELL
 end
