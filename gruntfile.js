@@ -168,6 +168,54 @@ module.exports = function(grunt) {
 				}]
 			}
 		},
+		validation: {
+			index: {
+				options: {
+					reset: grunt.option('reset') || false,
+					stoponerror: false,
+					relaxerror: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
+						"element \"center\" undefined",
+						"there is no attribute \"style\"",
+						"there is no attribute \"align\""] //ignores these errors
+				},
+				files: {
+					src: ['index.html']
+				}
+			},
+			source: {
+				options: {
+					reset: true, // grunt.option('reset') || false,
+					stoponerror: false,
+					relaxerror: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
+						"element \"center\" undefined",
+						"there is no attribute \"style\"",
+						"there is no attribute \"align\""] //ignores these errors
+				},
+				files: {
+					src: ['source.html']
+				}
+			}
+		},
+		// deploy via rsync
+		rsync: {
+			options: {
+				args: ['--verbose', '-e ssh --rsync-path=bin/rsync'],
+				exclude:['.git*','my_styles.scss', 'my_scripts.js', 'node_modules', '.sass-cache', 'Gruntfile.js', 'package.json', '.DS_Store', 'README.md', 'config.rb', 'working','Vagrantfile','.jshintrc'],
+				recursive: true
+			},
+			staging: {
+				options: {
+					src: "./",
+					dest: "~/path/to/theme/on/hostprovider",
+					host: "username@host.com",
+					recursive: true,
+					syncDest: true,
+				}
+			},
+			production: {
+
+			}
+		},
 		watch: {
 			css: {
 				files: ['css/my_styles.scss'],
@@ -175,7 +223,8 @@ module.exports = function(grunt) {
 				options: {
 					spawn: false
 				}
-			},
+			}
+		},
 			js: {
 				files: ['js/my_scripts.js'],
 				tasks: ['jshint'],
@@ -183,7 +232,6 @@ module.exports = function(grunt) {
 					spawn: false
 				}
 			}
-		}
 
 	});
 
@@ -200,6 +248,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-responsive-images');
+	grunt.loadNpmTasks('grunt-html-validation');
+	grunt.loadNpmTasks('grunt-rsync');
 
 
 	grunt.registerMultiTask('hideTemplate','Converts template tags to prevent inliner from messing with them', function () {
@@ -269,9 +319,10 @@ module.exports = function(grunt) {
 		grunt.file.write('email.html', '');
 	});
 
-	grunt.registerTask('build', ['postcss', 'uncss','replace:css','cssmin','jshint','concat','uglify','processhtml','compress']);
+	grunt.registerTask('build', ['postcss', 'uncss','replace:css','cssmin','jshint','concat','uglify','processhtml','validation:index','compress']);
     grunt.registerTask('merge',['showTemplate', 'merget']);
 	grunt.registerTask('zip', ['compress']);
 	grunt.registerTask('default',['watch']);
 	grunt.registerTask('responsive',['responsive_images']);
+	grunt.registerTask('validate', ['validation:source']);
 };

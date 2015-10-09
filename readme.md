@@ -38,13 +38,13 @@ the images you want on your webpage into the `images` folder.  Add your `<pictur
 ## Thanks ##
 
 This article is a great help getting Vagrant, NodeJS, and Windows to work [Getting Vagrant, Nodejs, and Windows to Play Well Together](http://blog.prolificinteractive.com/2015/01/21/getting-vagrant-nodejs-windows-play-well-together/)
-
-Special Thanks to Victor Garcia's article [A workflow for responsive emails using Ink and Grunt](https://medium.com/@victorgarcia/a-workflow-for-responsive-emails-using-ink-and-grunt-32d607879082)
-
-Check out the awesome Zurb's Ink: [A framework for Responsive HTML email](http://zurb.com/ink/)
-
-Check out CodeSchool's [Unmasking HTML Emails course](http://campus.codeschool.com/courses/unmasking-html-emails) (Does not' use Ink but very helpful!)
+Matt Banks article on grunting WordPress developement [Using Grunt for WordPress Theme Development](http://mattbanks.me/grunt-wordpress-development-deployments/)
 
 ## Change Log ##
 
-20151006 Initial creation
+### 20151009 ###
+ * added grunt-rsync
+ * some notes on how to get it to work with GoDaddy
+
+### 20151006 ###
+ * Initial creation

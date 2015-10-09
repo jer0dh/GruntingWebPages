@@ -1,0 +1,12 @@
+
+
+Using the following to setup rsync between godaddy
+http://www.htpcbeginner.com/install-rsync-on-godaddy-hosting-account/
+
+Vagrant box already had rsync installed
+
+The following command worked to rsync to server.
+rsync -avh -e ssh --rsync-path=bin/rsync ./working jerodh@jhtechservices.com:~/tmp/test
+
+NOTE: Godaddy does not allow one to use keys to authenticate with ssh so you must type in password each time.
+
