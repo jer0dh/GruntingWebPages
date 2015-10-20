@@ -42,6 +42,12 @@ Matt Banks article on grunting WordPress developement [Using Grunt for WordPress
 
 ## Change Log ##
 
+## 20151020 ##
+ * changed from grunt-html-validation to grunt-html since it has built in validator.  The former grunt package was getting network errors.
+ * added java install in vagrant file for grunt-html java-based validator
+ * changed so that a `dist` folder is created and can be then copied to production server.
+
+
 ### 20151009 ###
  * added grunt-rsync
  * some notes on how to get it to work with GoDaddy

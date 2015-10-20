@@ -7,12 +7,11 @@ module.exports = function(grunt) {
 		uncss: {
 			dist: {
 				files: {
-					'css/styles.css' : ['source.html']
+					'dist/css/styles.css' : ['source.html']
 				},
 				options: {
-					report: 'min' //optional: include to report savings
-				/*	ignore: ['#outlook a', '.ExternalClass', '#backgroundTable', '.ExternalClass p',
-					'.ExternalClass span', '.ExternalClass font', '.ExternalClass td', '.ExternalClass div'] */
+					report: 'min', //optional: include to report savings
+				    ignore: ['.warning']
 				}
 			}
 
@@ -20,7 +19,7 @@ module.exports = function(grunt) {
 		cssmin: {
 			target: {
 				files: {
-					'css/styles.min.css' : ['css/styles.css']
+					'dist/css/styles.min.css' : ['dist/css/styles.css']
 				}
 			}
 
@@ -28,7 +27,7 @@ module.exports = function(grunt) {
 		processhtml: {
 			dist: {
 				files: {
-					'index.html' : ['source.html']
+					'dist/index.html' : ['source.html']
 				}
 			}
 		},
@@ -56,12 +55,12 @@ module.exports = function(grunt) {
 					archive: 'web.zip'
 				},
 				files: [
-					{src: ['images/*'], dest: '/', filter: 'isFile'}, // includes files in path
-					{src: ['css/styles.min.css'], dest: '/', filter: 'isFile'},
+					{expand: true, cwd:'dist/',src: ['**/*'], dest: '/' }
+					 /*{src: ['css/styles.min.css'], dest: '/', filter: 'isFile'},
 					{src: ['js/scripts.min.js'], dest: '/', filter: 'isFile'},
 					{src: ['js/picturefill.min.js'], dest: '/', filter: 'isFile'},
 					{src: ['fonts/*'], dest: '/', filter: 'isFile'},
-					{src: ['index.html'], dest: '/'}
+					{src: ['index.html'], dest: '/'} */
 				]
 			}
 		},
@@ -130,7 +129,7 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			dist: {
-				src: ['js/*.js','!js/scripts.js','!js/scripts.min.js','!js/picturefill.min.js'],
+				src: ['js/jquery*.js','bootstrap.js','js/*.js','!js/scripts.js','!js/scripts.min.js','!js/picturefill.min.js'],
 				dest: 'js/scripts.js'
 			}
 		},
@@ -140,7 +139,7 @@ module.exports = function(grunt) {
 			},
 			build: {
 				files: {
-					'js/scripts.min.js': 'js/scripts.js'
+					'dist/js/scripts.min.js': 'js/scripts.js'
 				}
 			}
 		},
@@ -168,28 +167,31 @@ module.exports = function(grunt) {
 				}]
 			}
 		},
-		validation: {
+		clean: {
+			dist: ['dist/']
+		},
+		htmllint: {
 			index: {
 				options: {
-					reset: grunt.option('reset') || false,
-					stoponerror: false,
-					relaxerror: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
+					force: true,
+					ignore: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
 						"element \"center\" undefined",
 						"there is no attribute \"style\"",
-						"there is no attribute \"align\""] //ignores these errors
+						"there is no attribute \"align\"",
+					'The "frameborder" attribute on the "iframe" element is obsolete. Use CSS instead.'] //ignores these errors
 				},
 				files: {
-					src: ['index.html']
+					src: ['dist/index.html']
 				}
 			},
 			source: {
 				options: {
-					reset: true, // grunt.option('reset') || false,
-					stoponerror: false,
-					relaxerror: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
+					force: true,
+					ignore: ['Bad value X-UA-Compatible for attribute http-equiv on element meta.',
 						"element \"center\" undefined",
 						"there is no attribute \"style\"",
-						"there is no attribute \"align\""] //ignores these errors
+						"there is no attribute \"align\"",
+						'The "frameborder" attribute on the "iframe" element is obsolete. Use CSS instead.'] //ignores these errors
 				},
 				files: {
 					src: ['source.html']
@@ -214,6 +216,29 @@ module.exports = function(grunt) {
 			},
 			production: {
 
+			},
+			dist: {
+				options: {
+					src: "./fonts",
+					dest: "./dist",
+					exclude: ['.git*'],
+					recursive: true,
+					syncDest: true,
+				}
+			}
+		},
+		imagemin: {                          // Task
+			options: {
+				optimizationLevel: 7,
+				progressive: true
+			},
+			main: {                         // Another target
+				files: [{
+					expand: true,                  // Enable dynamic expansion
+					cwd: 'images/',                // Src matches are relative to this path
+					src: ['**/*.{png,jpg,gif}'],   // Actual patterns to match
+					dest: 'dist/images'                  // Destination path prefix
+				}]
 			}
 		},
 		watch: {
@@ -247,10 +272,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-responsive-images');
-	grunt.loadNpmTasks('grunt-html-validation');
+	grunt.loadNpmTasks('grunt-html');
 	grunt.loadNpmTasks('grunt-rsync');
-
+	grunt.loadNpmTasks('grunt-newer');
+	grunt.loadNpmTasks('grunt-contrib-imagemin');
 
 	grunt.registerMultiTask('hideTemplate','Converts template tags to prevent inliner from messing with them', function () {
 		var data = this.data;
@@ -319,10 +346,11 @@ module.exports = function(grunt) {
 		grunt.file.write('email.html', '');
 	});
 
-	grunt.registerTask('build', ['postcss', 'uncss','replace:css','cssmin','jshint','concat','uglify','processhtml','validation:index','compress']);
+	grunt.registerTask('dist', ['postcss', 'uncss','replace:css','cssmin','jshint','concat','uglify','processhtml','htmllint:index','newer:imagemin','rsync:dist','compress']);
     grunt.registerTask('merge',['showTemplate', 'merget']);
 	grunt.registerTask('zip', ['compress']);
 	grunt.registerTask('default',['watch']);
 	grunt.registerTask('responsive',['responsive_images']);
 	grunt.registerTask('validate', ['validation:source']);
+
 };

@@ -96,8 +96,9 @@ Vagrant.configure(2) do |config|
              hash -r
 
     #untested in this script - possible use with grunt-responsive-images
-    sudo apt-get install graphicsmagick
-
-     #
+    # sudo apt-get install -y graphicsmagick
+    # java needed for grunt-html
+    # sudo apt-get install openjdk-7-jre-headless
+    #
    SHELL
 end
